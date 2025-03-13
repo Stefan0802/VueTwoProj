@@ -1,0 +1,39 @@
+* {
+
+    margin: 0 auto;
+
+}
+
+.content{
+    display: flex;
+    justify-content: space-between;
+}
+
+.createBlockTask {
+    margin-top: 20px;
+    display: flex;
+    background-color: pink;
+    border-radius: 15px;
+    width: 33%;
+}
+
+.block{
+    display: flex;
+    flex-direction: column;
+
+}
+.block > *{
+    padding: 4px;
+}
+
+.block > button{
+    margin-bottom: 4px;
+}
+
+.section{
+    margin: 5px 0 5px 0;
+}
+
+.textInBlock{
+    color: black;
+}
