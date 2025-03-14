@@ -83,7 +83,7 @@ Vue.component('third-task-list', {
                 return false;
             }
 
-            if (trueDone == fullLength){
+            if (trueDone == fullLength && task.completionDate == ''){
                 task.completionDate = new Date().toLocaleString()
                 this.$emit('update-tasks', this.tasks);
             }
@@ -114,16 +114,16 @@ Vue.component('second-task-list', {
     template: `
         <div class="task-list">
             <h2>Второй лист</h2>
-            <ol>
-                <li v-for="(task, index) in tasks" :key="index" v-if="secondTaskIf(task)">
+            
+                <div v-for="(task, index) in tasks" :key="index" v-if="secondTaskIf(task)" class="block-task-second">
                     <strong>{{ task.title }}</strong>
                     <ol>
                         <li v-for="(step, stepIndex) in task.steps" :key="stepIndex">
                             <p>{{ step.text }} - <input type="checkbox" v-model="step.done"></p>                
                         </li>
                     </ol>
-                </li>
-            </ol>
+                </div>
+            
         </div>
     `,
     methods: {
@@ -159,16 +159,16 @@ Vue.component('first-task-list', {
     template: `
         <div class="task-list">
             <h2>Первый лист</h2>
-            <ol>
-                <li v-for="(task, index) in tasks" :key="index" v-if="firstTaskIf(task)">
+            
+                <div v-for="(task, index) in tasks" :key="index" v-if="firstTaskIf(task)" class="block-task-first">
                     <strong>{{ task.title }}</strong>
                     <ol>
                         <li v-for="(step, stepIndex) in task.steps" :key="stepIndex">
                             <p>{{ step.text }} - <input type="checkbox" v-model="step.done"></p>                
                         </li>
                     </ol>
-                </li>
-            </ol>
+                </div>
+            
         </div>
     `,
     methods: {
@@ -211,9 +211,11 @@ let app = new Vue({
     template: `
         <div>
             <create-task @task-created="addTask"></create-task>
-            <first-task-list :tasks="tasks"></first-task-list>
-            <second-task-list :tasks="tasks"></second-task-list>
-            <third-task-list :tasks="tasks"></third-task-list>
+            <div class="tasks-table">
+                <first-task-list :tasks="tasks" class="color-table-orange"></first-task-list>
+                <second-task-list :tasks="tasks" class="color-table-aqua"></second-task-list>
+                <third-task-list :tasks="tasks" class="color-table-green"></third-task-list>
+            </div>
         </div>
     `
 });

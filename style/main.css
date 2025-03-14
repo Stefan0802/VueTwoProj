@@ -37,3 +37,48 @@
 .textInBlock{
     color: black;
 }
+
+.tasks-table{
+    display: flex;
+    margin-top: 20px;
+
+}
+
+.color-table-orange {
+    background-color: indianred;
+    padding: 20px 10% 4% 10%;
+    width: 10%;
+}
+
+.color-table-aqua {
+    background-color: orange;
+    padding: 20px 10% 4% 10%;
+    width: 10%;
+}
+
+.color-table-green {
+    background-color: greenyellow;
+    padding: 20px 10% 4% 10%;
+    width: 10%;
+}
+
+.block-task-second{
+    background-color: aquamarine;
+    padding: 10px 10px 10px 10px;
+    border-radius: 10px;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.block-task-first{
+    background-color: antiquewhite;
+    padding: 10px 20px 10px 20px;
+    border-radius: 10px;
+    margin-top: 10px;
+    text-align: center;
+}
+
+p{
+    display: flex;
+    flex-wrap: wrap;
+}
