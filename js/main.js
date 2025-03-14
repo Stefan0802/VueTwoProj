@@ -65,7 +65,7 @@ Vue.component('third-task-list', {
                     <strong>{{ task.title }}</strong>
                     <ol>
                         <li v-for="(step, stepIndex) in task.steps" :key="stepIndex">
-                            <p>{{ step.text }} - <input type="checkbox" v-model="step.done"></p>                
+                            <p>{{ step.text }} - <input type="checkbox" v-model="step.done" disabled></p>                
                         </li>
                     </ol>
                     <p>Дата завершения: {{ task.completionDate }}</p>
@@ -84,8 +84,10 @@ Vue.component('third-task-list', {
             }
 
             if (trueDone == fullLength){
-                let completedDate = new Date().toLocaleDateString()
+                task.completionDate = new Date().toLocaleString()
+                this.$emit('update-tasks', this.tasks);
             }
+
 
             return trueDone == fullLength;
         }
