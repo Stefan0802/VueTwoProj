@@ -125,6 +125,10 @@ Vue.component('second-task-list', {
         tasks: {
             type: Array,
             required: true
+        },
+        secondTableTasks: {
+            type: Number,
+            required: true
         }
     },
     template: `
@@ -154,12 +158,16 @@ Vue.component('second-task-list', {
 
 
             return (trueDone > fullLength / 2 || trueDone == fullLength / 2) && trueDone < fullLength;
+        },
+        updateTaskCountSecond() {
+            this.$emit('update-count', this.tasks.filter(task => this.secondTaskIf(task)).length);
         }
     },
     watch: {
         tasks: {
             handler(newTasks) {
                 localStorage.setItem("tasks", JSON.stringify(newTasks));
+                this.updateTaskCountSecond()
             },
             deep: true
         }
@@ -223,15 +231,24 @@ let app = new Vue({
         if (localStorage.getItem("firstTableTasks")){
             firstTableTasks = localStorage.getItem("firstTableTasks")
         }
+        let secondTableTasks = 0
+        if (localStorage.getItem("secondTableTasks")){
+            secondTableTasks = localStorage.getItem("secondTableTasks")
+        }
         return {
             tasks: tasks,
-            firstTableTasks: firstTableTasks
+            firstTableTasks: firstTableTasks,
+            secondTableTasks: secondTableTasks
         };
     },
     methods: {
         updateCount(count) {
             this.firstTableTasks = count;
             localStorage.setItem("firstTableTasks", this.firstTableTasks);
+        },
+        updateCountSecond(count){
+            this.secondTableTasks = count;
+            localStorage.setItem("secondTableTasks", this.secondTableTasks);
         },
         addTask(task) {
             this.tasks.push(task);
@@ -243,7 +260,7 @@ let app = new Vue({
             <create-task @task-created="addTask" :firstTableTasks="firstTableTasks" ></create-task>
             <div class="tasks-table">
                 <first-task-list :tasks="tasks" :firstTableTasks="firstTableTasks" @update-count="updateCount" class="color-table-orange"></first-task-list>
-                <second-task-list :tasks="tasks" class="color-table-aqua"></second-task-list>
+                <second-task-list :tasks="tasks" :secondTableTasks="secondTableTasks" class="color-table-aqua" @update-count="updateCountSecond" ></second-task-list>
                 <third-task-list :tasks="tasks" class="color-table-green"></third-task-list>
             </div>
             
