@@ -183,6 +183,10 @@ Vue.component('first-task-list', {
         firstTableTasks: {
             type: Number,
             required: true
+        },
+        secondTableTasks: {
+            type: Number,
+            required: true
         }
     },
     template: `
@@ -193,7 +197,7 @@ Vue.component('first-task-list', {
                 <strong>{{ task.title }}</strong>
                 <ol>
                     <li v-for="(step, stepIndex) in task.steps" :key="stepIndex">
-                        <p>{{ step.text }} - <input type="checkbox" v-model="step.done"></p>                
+                        <p>{{ step.text }} - <input type="checkbox" v-model="step.done" :disabled="secondTableTasks == 5"></p>                
                     </li>
                 </ol>
             </div>
@@ -259,7 +263,7 @@ let app = new Vue({
         <div>
             <create-task @task-created="addTask" :firstTableTasks="firstTableTasks" ></create-task>
             <div class="tasks-table">
-                <first-task-list :tasks="tasks" :firstTableTasks="firstTableTasks" @update-count="updateCount" class="color-table-orange"></first-task-list>
+                <first-task-list :tasks="tasks" :secondTableTasks="secondTableTasks" :firstTableTasks="firstTableTasks" @update-count="updateCount" class="color-table-orange"></first-task-list>
                 <second-task-list :tasks="tasks" :secondTableTasks="secondTableTasks" class="color-table-aqua" @update-count="updateCountSecond" ></second-task-list>
                 <third-task-list :tasks="tasks" class="color-table-green"></third-task-list>
             </div>
