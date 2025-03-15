@@ -37,7 +37,8 @@ Vue.component('create-task', {
     },
     methods: {
         onSubmit() {
-            if (this.firstTableTasks <= 2){
+            console.log(this.firstTableTasks)
+            if (this.firstTableTasks >= 3){
                 this.title = '';
                 this.steps = [];
                 alert("Первый столбик переполнен")
@@ -179,23 +180,17 @@ Vue.component('first-task-list', {
     template: `
         <div class="task-list">
             <h2>Первый лист</h2>
-            <p>Количество задач: {{ taskCount }}</p>
+            
             <div v-for="(task, index) in tasks" :key="index" v-if="firstTaskIf(task)" class="block-task-first">
                 <strong>{{ task.title }}</strong>
                 <ol>
                     <li v-for="(step, stepIndex) in task.steps" :key="stepIndex">
-                        <p>{{ step.text }} - <input type="checkbox" v-model="step.done" @change="updateTaskCount"></p>                
+                        <p>{{ step.text }} - <input type="checkbox" v-model="step.done"></p>                
                     </li>
                 </ol>
             </div>
         </div>
     `,
-    computed: {
-        taskCount() {
-            return this.tasks.filter(task => this.firstTaskIf(task)).length;
-
-        }
-    },
     methods: {
         firstTaskIf(task) {
             let trueDone = task.steps.filter(step => step.done).length;
@@ -203,14 +198,14 @@ Vue.component('first-task-list', {
             return trueDone < fullLength / 2;
         },
         updateTaskCount() {
-            this.$emit('update-count', this.taskCount);
+            this.$emit('update-count', this.tasks.filter(task => this.firstTaskIf(task)).length);
         }
-
     },
     watch: {
         tasks: {
             handler(newTasks) {
                 localStorage.setItem("tasks", JSON.stringify(newTasks));
+                this.updateTaskCount();
             },
             deep: true
         }
@@ -224,14 +219,19 @@ let app = new Vue({
         if (localStorage.getItem("tasks")) {
             tasks = JSON.parse(localStorage.getItem("tasks"));
         }
+        let firstTableTasks = 0
+        if (localStorage.getItem("firstTableTasks")){
+            firstTableTasks = localStorage.getItem("firstTableTasks")
+        }
         return {
             tasks: tasks,
-            firstTableTasks: 0
+            firstTableTasks: firstTableTasks
         };
     },
     methods: {
         updateCount(count) {
             this.firstTableTasks = count;
+            localStorage.setItem("firstTableTasks", this.firstTableTasks);
         },
         addTask(task) {
             this.tasks.push(task);
