@@ -1,7 +1,10 @@
 * {
-
     margin: 0 auto;
 
+}
+
+body{
+    background-color: antiquewhite;
 }
 
 .content{
@@ -41,7 +44,7 @@
 .tasks-table{
     display: flex;
     margin-top: 20px;
-
+    margin-bottom: 50px;
 }
 
 .color-table-orange {
@@ -78,7 +81,25 @@
     text-align: center;
 }
 
+.block-task-third{
+    background-color: antiquewhite;
+    padding: 10px 20px 10px 20px;
+    border-radius: 10px;
+    margin-top: 10px;
+    text-align: center;
+}
+
+
 p{
     display: flex;
     flex-wrap: wrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
+
+.text-date{
+    flex-wrap: wrap;
+    overflow: unset;
+    text-overflow: unset;
+}
+

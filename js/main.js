@@ -1,4 +1,11 @@
 Vue.component('create-task', {
+    props:{
+        firstTableTasks: {
+            type: Number,
+            required: true
+        }
+
+    },
     template: `
         <div class="createBlockTask">
             <form @submit.prevent="onSubmit" class="block">
@@ -16,9 +23,10 @@ Vue.component('create-task', {
                     <button type="button" @click="removeStep" :disabled="steps.length === 0">убавить шаг</button>
                 </div>
                 
-                <button type="submit" :disabled="steps.length === 0">отправить</button>
+                <button type="submit" :disabled="steps.length === 0  ">отправить</button>
             </form>
         </div>
+        
     `,
     data() {
         return {
@@ -29,14 +37,21 @@ Vue.component('create-task', {
     },
     methods: {
         onSubmit() {
-            let task = {
-                title: this.title,
-                steps: this.steps,
-                completedDate: this.completedDate
-            };
-            this.$emit('task-created', task);
-            this.title = '';
-            this.steps = [];
+            if (this.firstTableTasks <= 2){
+                this.title = '';
+                this.steps = [];
+                alert("Первый столбик переполнен")
+            }else{
+                let task = {
+                    title: this.title,
+                    steps: this.steps,
+                    completedDate: this.completedDate
+                };
+                this.$emit('task-created', task);
+                this.title = '';
+                this.steps = [];
+            }
+
         },
         addStep() {
             this.steps.push({ text: '', done: false });
@@ -60,17 +75,17 @@ Vue.component('third-task-list', {
     template: `
         <div class="task-list">
             <h2>Третий лист</h2>
-            <ol>
-                <li v-for="(task, index) in tasks" :key="index" v-if="thirdTaskIf(task)">
+            
+                <div v-for="(task, index) in tasks" :key="index" v-if="thirdTaskIf(task)" class="block-task-third">
                     <strong>{{ task.title }}</strong>
                     <ol>
                         <li v-for="(step, stepIndex) in task.steps" :key="stepIndex">
                             <p>{{ step.text }} - <input type="checkbox" v-model="step.done" disabled></p>                
                         </li>
                     </ol>
-                    <p>Дата завершения: {{ task.completionDate }}</p>
-                </li>
-            </ol>
+                    <b class="text-date">Дата завершения: {{ task.completionDate }}</b>
+                </div>
+            
         </div>
     `,
     methods: {
@@ -83,7 +98,7 @@ Vue.component('third-task-list', {
                 return false;
             }
 
-            if (trueDone == fullLength && task.completionDate == ''){
+            if (trueDone == fullLength && !task.completionDate){
                 task.completionDate = new Date().toLocaleString()
                 this.$emit('update-tasks', this.tasks);
             }
@@ -119,7 +134,7 @@ Vue.component('second-task-list', {
                     <strong>{{ task.title }}</strong>
                     <ol>
                         <li v-for="(step, stepIndex) in task.steps" :key="stepIndex">
-                            <p>{{ step.text }} - <input type="checkbox" v-model="step.done"></p>                
+                            <p>{{ step.text }} - <input type="checkbox" :disabled="step.done" v-model="step.done" ></p>                
                         </li>
                     </ol>
                 </div>
@@ -130,11 +145,12 @@ Vue.component('second-task-list', {
         secondTaskIf(task) {
             let trueDone = task.steps.filter(step => step.done).length;
             let fullLength = task.steps.length;
-
+            let trueTask = 0;
 
             if (fullLength === 0) {
                 return false;
             }
+
 
             return (trueDone > fullLength / 2 || trueDone == fullLength / 2) && trueDone < fullLength;
         }
@@ -154,29 +170,42 @@ Vue.component('first-task-list', {
         tasks: {
             type: Array,
             required: true
+        },
+        firstTableTasks: {
+            type: Number,
+            required: true
         }
     },
     template: `
         <div class="task-list">
             <h2>Первый лист</h2>
-            
-                <div v-for="(task, index) in tasks" :key="index" v-if="firstTaskIf(task)" class="block-task-first">
-                    <strong>{{ task.title }}</strong>
-                    <ol>
-                        <li v-for="(step, stepIndex) in task.steps" :key="stepIndex">
-                            <p>{{ step.text }} - <input type="checkbox" v-model="step.done"></p>                
-                        </li>
-                    </ol>
-                </div>
-            
+            <p>Количество задач: {{ taskCount }}</p>
+            <div v-for="(task, index) in tasks" :key="index" v-if="firstTaskIf(task)" class="block-task-first">
+                <strong>{{ task.title }}</strong>
+                <ol>
+                    <li v-for="(step, stepIndex) in task.steps" :key="stepIndex">
+                        <p>{{ step.text }} - <input type="checkbox" v-model="step.done" @change="updateTaskCount"></p>                
+                    </li>
+                </ol>
+            </div>
         </div>
     `,
+    computed: {
+        taskCount() {
+            return this.tasks.filter(task => this.firstTaskIf(task)).length;
+
+        }
+    },
     methods: {
         firstTaskIf(task) {
             let trueDone = task.steps.filter(step => step.done).length;
             let fullLength = task.steps.length;
             return trueDone < fullLength / 2;
+        },
+        updateTaskCount() {
+            this.$emit('update-count', this.taskCount);
         }
+
     },
     watch: {
         tasks: {
@@ -196,26 +225,28 @@ let app = new Vue({
             tasks = JSON.parse(localStorage.getItem("tasks"));
         }
         return {
-            tasks: tasks
+            tasks: tasks,
+            firstTableTasks: 0
         };
     },
     methods: {
+        updateCount(count) {
+            this.firstTableTasks = count;
+        },
         addTask(task) {
             this.tasks.push(task);
-            localStorage.setItem("tasks", JSON.stringify(this.tasks));
-        },
-        updateLocalStorage() {
             localStorage.setItem("tasks", JSON.stringify(this.tasks));
         }
     },
     template: `
         <div>
-            <create-task @task-created="addTask"></create-task>
+            <create-task @task-created="addTask" :firstTableTasks="firstTableTasks" ></create-task>
             <div class="tasks-table">
-                <first-task-list :tasks="tasks" class="color-table-orange"></first-task-list>
+                <first-task-list :tasks="tasks" :firstTableTasks="firstTableTasks" @update-count="updateCount" class="color-table-orange"></first-task-list>
                 <second-task-list :tasks="tasks" class="color-table-aqua"></second-task-list>
                 <third-task-list :tasks="tasks" class="color-table-green"></third-task-list>
             </div>
+            
         </div>
     `
 });
