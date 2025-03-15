@@ -19,8 +19,8 @@ Vue.component('create-task', {
                 </ol>
                 
                 <div>
-                    <button type="button" @click="addStep">добавить шаг</button>
-                    <button type="button" @click="removeStep" :disabled="steps.length === 0">убавить шаг</button>
+                    <button type="button" @click="addStep" :disabled="steps.length === 5" >добавить шаг</button>
+                    <button type="button" @click="removeStep" :disabled="steps.length <= 3 ">убавить шаг</button>
                 </div>
                 
                 <button type="submit" :disabled="steps.length === 0  ">отправить</button>
@@ -55,7 +55,15 @@ Vue.component('create-task', {
 
         },
         addStep() {
-            this.steps.push({ text: '', done: false });
+            // Если шагов нет, добавляем три
+            if (this.steps.length === 0) {
+                for (let i = 0; i < 3; i++) {
+                    this.steps.push({ text: '', done: false });
+                }
+            } else if (this.steps.length < 5) {
+                // Если шагов меньше 5, добавляем еще один
+                this.steps.push({ text: '', done: false });
+            }
         },
         removeStep() {
             if (this.steps.length > 0) {
@@ -148,7 +156,7 @@ Vue.component('second-task-list', {
     `,
     methods: {
         secondTaskIf(task) {
-            let trueDone = task.steps.filter(step => step.done).length;
+            let trueDone = task.steps.filter(task => task.done).length;
             let fullLength = task.steps.length;
             let trueTask = 0;
 
