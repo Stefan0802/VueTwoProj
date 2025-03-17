@@ -37,31 +37,35 @@ Vue.component('create-task', {
     },
     methods: {
         onSubmit() {
-            console.log(this.firstTableTasks)
-            if (this.firstTableTasks >= 3){
-                this.title = '';
-                this.steps = [];
-                alert("Первый столбик переполнен")
+            let hasOnlySpaces = this.steps.some(step => step.text.trim() === '');
+            if (hasOnlySpaces) {
+                alert("Ошибка, нельзя писать только пробелы.");
+
             }else{
-                let task = {
-                    title: this.title,
-                    steps: this.steps,
-                    completedDate: this.completedDate
-                };
-                this.$emit('task-created', task);
-                this.title = '';
-                this.steps = [];
+                if (this.firstTableTasks >= 3){
+                    this.title = '';
+                    this.steps = [];
+                    alert("Первый столбик переполнен")
+                }else{
+                    let task = {
+                        title: this.title,
+                        steps: this.steps,
+                        completedDate: this.completedDate
+                    };
+                    this.$emit('task-created', task);
+                    this.title = '';
+                    this.steps = [];
+                }
             }
+
 
         },
         addStep() {
-            // Если шагов нет, добавляем три
             if (this.steps.length === 0) {
                 for (let i = 0; i < 3; i++) {
                     this.steps.push({ text: '', done: false });
                 }
             } else if (this.steps.length < 5) {
-                // Если шагов меньше 5, добавляем еще один
                 this.steps.push({ text: '', done: false });
             }
         },
@@ -205,7 +209,7 @@ Vue.component('first-task-list', {
                 <strong>{{ task.title }}</strong>
                 <ol>
                     <li v-for="(step, stepIndex) in task.steps" :key="stepIndex">
-                        <p>{{ step.text }} - <input type="checkbox" v-model="step.done" :disabled="secondTableTasks == 5"></p>                
+                        <p @click="selectStep(step)" :class="{ 'doneStep': step.done }">{{ step.text }}</p>
                     </li>
                 </ol>
             </div>
@@ -216,6 +220,9 @@ Vue.component('first-task-list', {
             let trueDone = task.steps.filter(step => step.done).length;
             let fullLength = task.steps.length;
             return trueDone < fullLength / 2;
+        },
+        selectStep(step) {
+            step.done = !step.done;
         },
         updateTaskCount() {
             this.$emit('update-count', this.tasks.filter(task => this.firstTaskIf(task)).length);
