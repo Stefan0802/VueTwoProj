@@ -104,6 +104,12 @@ p{
 }
 
 .doneStep{
+    text-decoration: line-through;
 
 }
+
+.pointer{
+    cursor: pointer;
+}
+
 

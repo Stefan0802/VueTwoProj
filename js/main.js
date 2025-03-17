@@ -10,11 +10,11 @@ Vue.component('create-task', {
         <div class="createBlockTask">
             <form @submit.prevent="onSubmit" class="block">
                 <label for="title" class="textInBlock">Title</label>
-                <input type="text" v-model="title" required>
+                <input type="text" v-model="title" required placeholder="Заголовок">
                 
                 <ol>
                     <li v-for="(step, index) in steps" :key="index" class="section textInBlock">
-                        <input type="text" v-model="step.text" placeholder="Введите шаг" required>
+                        <input type="text" v-model="step.text" placeholder="Введите задачу" required>
                     </li>
                 </ol>
                 
@@ -93,8 +93,8 @@ Vue.component('third-task-list', {
                     <strong>{{ task.title }}</strong>
                     <ol>
                         <li v-for="(step, stepIndex) in task.steps" :key="stepIndex">
-                            <p>{{ step.text }} - <input type="checkbox" v-model="step.done" disabled></p>                
-                        </li>
+                        <p class="doneStep" >{{ step.text }}</p>
+                    </li>
                     </ol>
                     <b class="text-date">Дата завершения: {{ task.completionDate }}</b>
                 </div>
@@ -150,9 +150,10 @@ Vue.component('second-task-list', {
                 <div v-for="(task, index) in tasks" :key="index" v-if="secondTaskIf(task)" class="block-task-second">
                     <strong>{{ task.title }}</strong>
                     <ol>
-                        <li v-for="(step, stepIndex) in task.steps" :key="stepIndex">
-                            <p>{{ step.text }} - <input type="checkbox" :disabled="step.done" v-model="step.done" ></p>                
-                        </li>
+                        <li v-for="(step, stepIndex) in task.steps" :key="stepIndex" >
+                            <p v-if="step.done == false" @click="selectStep(step)" :class="{ 'doneStep': step.done, 'pointer': true }">{{ step.text }}</p>
+                            <p v-else :class="{ 'doneStep': step.done}">{{ step.text }}</p>
+                        </li>     
                     </ol>
                 </div>
             
@@ -170,6 +171,10 @@ Vue.component('second-task-list', {
 
 
             return (trueDone > fullLength / 2 || trueDone == fullLength / 2) && trueDone < fullLength;
+        },
+        selectStep(step) {
+
+            step.done = !step.done;
         },
         updateTaskCountSecond() {
             this.$emit('update-count', this.tasks.filter(task => this.secondTaskIf(task)).length);
@@ -209,7 +214,7 @@ Vue.component('first-task-list', {
                 <strong>{{ task.title }}</strong>
                 <ol>
                     <li v-for="(step, stepIndex) in task.steps" :key="stepIndex">
-                        <p @click="selectStep(step)" :class="{ 'doneStep': step.done }">{{ step.text }}</p>
+                        <p @click="selectStep(step)" :class="{ 'doneStep': step.done, 'pointer': true }" >{{ step.text }}</p>
                     </li>
                 </ol>
             </div>
