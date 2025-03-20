@@ -214,7 +214,7 @@ Vue.component('first-task-list', {
                 <strong>{{ task.title }}</strong>
                 <ol>
                     <li v-for="(step, stepIndex) in task.steps" :key="stepIndex">   
-                        <p @click="selectStep(step)" :class="{ 'doneStep': step.done, 'pointer': true }" v-if="secondTableTasks <= " >{{ step.text }}</p>
+                        <p @click="selectStep(step)" :class="{ 'doneStep': step.done, 'pointer': true }" v-if="secondTableTasks <= 4" >{{ step.text }}</p>
                         <p v-else :class="{ 'doneStep': step.done, 'pointer': true }">{{ step.text }}</p>
                     </li>
                 </ol>
